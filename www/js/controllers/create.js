@@ -15,6 +15,7 @@ angular.module('breadcrumb')
 
   const moveX = (crumb, num) => {
     const move = `${crumb.left += num}%`;
+
     const style = {
       left: move,
       'transition-duration': '250ms',
@@ -70,7 +71,10 @@ angular.module('breadcrumb')
     $scope.trail.type = $scope.trailTypes[$scope.step];
   };
 
-  $scope.location = {};
+  $scope.location = {}; // this is the shared scope with the directive and is in the View
+    // how can I replace this ?
+
+  $scope.obj = {};
 
   $scope.difficulty = {
     1: 'easy',
@@ -127,15 +131,27 @@ angular.module('breadcrumb')
 
   $scope.crumbs = [];
 
+  function watchValue(arg) {
+    const step = $scope.step(); // bc its an instance of the constructor
+    step.location = arg;
+    console.warn(step, 'step.location');
+    console.warn(arg, 'arg');
+  }
+
   $scope.add = () => {
     if (!$scope.review.check) {
       $scope.move(-100);
+      console.warn($scope.location, '$scope.location in add()')
+      const step = $scope.step();
+      step.location = $scope.location;
+      console.warn(step, 'step add()')
       $scope.trail.crumbs += 1;
       const crumb = $scope.crumb();
       $scope.crumbs.push(crumb);
       console.warn($scope.crumb, 'crumb');
     }
   };
+
 
   $scope.remove = (index) => {
     $scope.crumbs.splice(index, 1);
@@ -212,86 +228,89 @@ angular.module('breadcrumb')
   };
 
   $scope.initMap = () => {
-     var map = new google.maps.Map(document.getElementById('map'), {
-       center: {lat: -33.8688, lng: 151.2195},
-       zoom: 13
-     });
-     var card = document.getElementById('pac-card');
-     var input = document.getElementById('pac-input');
-     var types = document.getElementById('type-selector');
-     var strictBounds = document.getElementById('strict-bounds-selector');
+    const map = new google.maps.Map(document.getElementById('map'), {
+      center: {
+        lat: -33.8688,
+        lng: 151.2195,
+      },
+      zoom: 13,
+    });
+    const card = document.getElementById('pac-card');
+    const input = document.getElementById('pac-input');
+    const types = document.getElementById('type-selector');
+    const strictBounds = document.getElementById('strict-bounds-selector');
 
-     map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
 
-     var autocomplete = new google.maps.places.Autocomplete(input);
+    const autocomplete = new google.maps.places.Autocomplete(input);
 
-     // Bind the map's bounds (viewport) property to the autocomplete object,
-     // so that the autocomplete requests use the current map bounds for the
-     // bounds option in the request.
-     autocomplete.bindTo('bounds', map);
+   // Bind the map's bounds (viewport) property to the autocomplete object,
+   // so that the autocomplete requests use the current map bounds for the
+   // bounds option in the request.
+    autocomplete.bindTo('bounds', map);
 
-     var infowindow = new google.maps.InfoWindow();
-     var infowindowContent = document.getElementById('infowindow-content');
-     infowindow.setContent(infowindowContent);
-     var marker = new google.maps.Marker({
-       map: map,
-       anchorPoint: new google.maps.Point(0, -29)
-     });
+    const infowindow = new google.maps.InfoWindow();
+    const infowindowContent = document.getElementById('infowindow-content');
+    infowindow.setContent(infowindowContent);
+    const marker = new google.maps.Marker({
+      map,
+      anchorPoint: new google.maps.Point(0, -29),
+    });
 
-     autocomplete.addListener('place_changed', function() {
-       infowindow.close();
-       marker.setVisible(false);
-       var place = autocomplete.getPlace();
-       if (!place.geometry) {
-         // User entered the name of a Place that was not suggested and
-         // pressed the Enter key, or the Place Details request failed.
-         window.alert("No details available for input: '" + place.name + "'");
-         return;
-       }
+    autocomplete.addListener('place_changed', () => {
+      infowindow.close();
+      marker.setVisible(false);
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
+       // User entered the name of a Place that was not suggested and
+       // pressed the Enter key, or the Place Details request failed.
+        window.alert(`No details available for input: ${place.name}`);
+        return;
+      }
 
-       // If the place has a geometry, then present it on a map.
-       if (place.geometry.viewport) {
-         map.fitBounds(place.geometry.viewport);
-       } else {
-         map.setCenter(place.geometry.location);
-         map.setZoom(17);  // Why 17? Because it looks good.
-       }
-       marker.setPosition(place.geometry.location);
-       marker.setVisible(true);
+     // If the place has a geometry, then present it on a map.
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(17);  // Why 17? Because it looks good.
+      }
+      marker.setPosition(place.geometry.location);
+      marker.setVisible(true);
 
-       var address = '';
-       if (place.address_components) {
-         address = [
-           (place.address_components[0] && place.address_components[0].short_name || ''),
-           (place.address_components[1] && place.address_components[1].short_name || ''),
-           (place.address_components[2] && place.address_components[2].short_name || '')
-         ].join(' ');
-       }
+      let address = '';
+      if (place.address_components) {
+        address = [
+          (place.address_components[0] && place.address_components[0].short_name || ''),
+          (place.address_components[1] && place.address_components[1].short_name || ''),
+          (place.address_components[2] && place.address_components[2].short_name || '')
+        ].join(' ');
+      }
 
-       infowindowContent.children['place-icon'].src = place.icon;
-       infowindowContent.children['place-name'].textContent = place.name;
-       infowindowContent.children['place-address'].textContent = address;
-       infowindow.open(map, marker);
-     });
+      infowindowContent.children['place-icon'].src = place.icon;
+      infowindowContent.children['place-name'].textContent = place.name;
+      infowindowContent.children['place-address'].textContent = address;
+      infowindow.open(map, marker);
+    });
 
-     // Sets a listener on a radio button to change the filter type on Places
-     // Autocomplete.
-     function setupClickListener(id, types) {
-       var radioButton = document.getElementById(id);
-       radioButton.addEventListener('click', function() {
-         autocomplete.setTypes(types);
+   // Sets a listener on a radio button to change the filter type on Places
+   // Autocomplete.
+    function setupClickListener(id, types) {
+      const radioButton = document.getElementById(id);
+      radioButton.addEventListener('click', () => {
+        autocomplete.setTypes(types);
+      });
+    }
+
+    setupClickListener('changetype-all', []);
+    setupClickListener('changetype-address', ['address']);
+    setupClickListener('changetype-establishment', ['establishment']);
+    setupClickListener('changetype-geocode', ['geocode']);
+
+    document.getElementById('use-strict-bounds')
+       .addEventListener('click', () => {
+         console.warn(`Checkbox click! New state=${this.checked}`);
+         autocomplete.setOptions({ strictBounds: this.checked });
        });
-     }
-
-     setupClickListener('changetype-all', []);
-     setupClickListener('changetype-address', ['address']);
-     setupClickListener('changetype-establishment', ['establishment']);
-     setupClickListener('changetype-geocode', ['geocode']);
-
-     document.getElementById('use-strict-bounds')
-         .addEventListener('click', function() {
-           console.log('Checkbox clicked! New state=' + this.checked);
-           autocomplete.setOptions({strictBounds: this.checked});
-         });
-   }
+  };
 });
