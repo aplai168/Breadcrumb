@@ -3,6 +3,7 @@
 
 angular.module('breadcrumb')
 .controller('CreateTrailCtrl', function ($scope, $state, Trail, Map) {
+  // for testing purposes
   const addresses = [
     '727 Mandeville St, New Orleans, LA, 70117',
     '15828 196th Pl NE, Woodinville, WA, 98077',
@@ -12,6 +13,7 @@ angular.module('breadcrumb')
   ];
 
   const i = () => Math.floor(Math.random() * 5);
+// end
 
   const moveX = (crumb, num) => {
     const move = `${crumb.left += num}%`;
@@ -137,14 +139,10 @@ angular.module('breadcrumb')
   $scope.add = (arg) => {
     if (!$scope.review.check) {
       $scope.move(-100);
-      console.warn($scope.location, '$scope.location in add()')
       $scope.trail.crumbs += 1;
       const crumb = $scope.crumb();
       crumb.location = arg;
-      console.warn(arg, 'arg add()')
-      console.warn(crumb, 'crumb add()')
       $scope.crumbs.push(crumb);
-      console.warn($scope.crumbs, 'mylistofcrumbs');
     }
   };
 
@@ -183,7 +181,6 @@ angular.module('breadcrumb')
   $scope.reviewMap = () => {
     $scope.loading = null;
     $scope.review.check = true;
-    console.warn($scope.crumbs, 'array in ReviewMap of Crumbs')
     Map.add($scope.crumbs, $scope.trail.transport)
     .then((data) => {
       $scope.loading = { display: 'none' };
@@ -198,7 +195,6 @@ angular.module('breadcrumb')
         'animation-name': 'moveUp',
       };
       $scope.$apply();
-      console.warn(data, 'data');
     });
   };
 
@@ -234,8 +230,8 @@ angular.module('breadcrumb')
     });
     const card = document.getElementById('pac-card');
     const input = document.getElementById('pac-input');
-    const types = document.getElementById('type-selector');
-    const strictBounds = document.getElementById('strict-bounds-selector');
+    // const types = document.getElementById('type-selector');
+    // const strictBounds = document.getElementById('strict-bounds-selector');
 
     map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
 
@@ -261,7 +257,7 @@ angular.module('breadcrumb')
       if (!place.geometry) {
        // User entered the name of a Place that was not suggested and
        // pressed the Enter key, or the Place Details request failed.
-        window.alert(`No details available for input: ${place.name}`);
+        console.warn(`No details available for input: ${place.name}`);
         return;
       }
 
@@ -270,7 +266,7 @@ angular.module('breadcrumb')
         map.fitBounds(place.geometry.viewport);
       } else {
         map.setCenter(place.geometry.location);
-        map.setZoom(17);  // Why 17? Because it looks good.
+        map.setZoom(17);
       }
       marker.setPosition(place.geometry.location);
       marker.setVisible(true);
@@ -278,9 +274,9 @@ angular.module('breadcrumb')
       let address = '';
       if (place.address_components) {
         address = [
-          (place.address_components[0] && place.address_components[0].short_name || ''),
-          (place.address_components[1] && place.address_components[1].short_name || ''),
-          (place.address_components[2] && place.address_components[2].short_name || '')
+          ((place.address_components[0] && place.address_components[0].short_name) || ''),
+          ((place.address_components[1] && place.address_components[1].short_name) || ''),
+          ((place.address_components[2] && place.address_components[2].short_name) || ''),
         ].join(' ');
       }
 
@@ -292,12 +288,12 @@ angular.module('breadcrumb')
 
    // Sets a listener on a radio button to change the filter type on Places
    // Autocomplete.
-    function setupClickListener(id, types) {
+    const setupClickListener = (id, types1) => {
       const radioButton = document.getElementById(id);
       radioButton.addEventListener('click', () => {
-        autocomplete.setTypes(types);
+        autocomplete.setTypes(types1);
       });
-    }
+    };
 
     setupClickListener('changetype-all', []);
     setupClickListener('changetype-address', ['address']);
