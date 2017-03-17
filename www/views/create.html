@@ -86,23 +86,18 @@
           <input type="text" ng-model="crumb.description" placeholder="Description">
         </label>
 
-
-        <div class="list">
-          <label class="item item-input textbox">
-            <input class="col" type="text" data-method="watchValue" placeholder="Location" location-suggestion location="location" ng-model="location.formatted_address">
-            <div class="col col-10" ng-click="test()">
-              <i class="positive icon ion-navigate s-1x"></i>
-            </div>
-          </label>
+        <div class="item item-input textbox">
+          <input class="col" type="text" data-method="watchValue" placeholder="Location" location-suggestion location="location" ng-model="location.formatted_address">
+          <div class="col col-10" ng-click="test()">
+            <i class="positive icon ion-navigate s-1x"></i>
+          </div>
         </div>
 
         <div class="item item-divider center" ng-click="test('hey')">
           <h1>MEDIA UPLOAD</h1>
-<!-- auto start -->
-
-
-        <!-- auto end  -->
+        </div>
       </div>
+
 
       <div class="row">
         <div class="col">
@@ -140,20 +135,21 @@
         </div>
       </div>
     </div>
+    <div class="bar bar-footer bar-royal" ng-click="reviewMap()" ng-if="crumbs.length > 1 && !review.check">
+      <div class="title">Review and submit</div>
+    </div>
+
+    <div class="tabs tabs-icon-top" ng-if="review.check">
+      <a class="tab-item" ng-click="reset()">
+        <i class="icon ion-compose"></i>
+        Edit
+      </a>
+      <a class="tab-item" ng-click="submit()">
+        <i class="icon ion-checkmark-round"></i>
+        Submit
+      </a>
+    </div>
   </ion-content>
 
-  <div class="bar bar-footer bar-royal" ng-click="reviewMap()" ng-if="crumbs.length > 1 && !review.check">
-    <div class="title">Review and submit</div>
-  </div>
 
-  <div class="tabs tabs-icon-top" ng-if="review.check">
-    <a class="tab-item" ng-click="reset()">
-      <i class="icon ion-compose"></i>
-      Edit
-    </a>
-    <a class="tab-item" ng-click="submit()">
-      <i class="icon ion-checkmark-round"></i>
-      Submit
-    </a>
-  </div>
 </ion-view>
