@@ -115,40 +115,36 @@ angular.module('breadcrumb')
     left: 2.5,
     style: null,
   };
-
-  $scope.crumb = () => ({
-    name: '',
-    description: '',
-    location: addresses[i()],
-    text: '',
-    media: '',
-    image: '',
-    video: '',
-    ar: '',
-    left: 2.5,
-    style: { 'animation-name': 'moveInFromRight' },
-  });
+// addresses[i()]
+  $scope.crumb = () => {
+    const obj = {
+      name: '',
+      description: '',
+      location: '',
+      text: '',
+      media: '',
+      image: '',
+      video: '',
+      ar: '',
+      left: 2.5,
+      style: { 'animation-name': 'moveInFromRight' },
+    };
+    return obj;
+  };
 
   $scope.crumbs = [];
 
-  function watchValue(arg) {
-    const step = $scope.step(); // bc its an instance of the constructor
-    step.location = arg;
-    console.warn(step, 'step.location');
-    console.warn(arg, 'arg');
-  }
-
-  $scope.add = () => {
+  $scope.add = (arg) => {
     if (!$scope.review.check) {
       $scope.move(-100);
       console.warn($scope.location, '$scope.location in add()')
-      const step = $scope.step();
-      step.location = $scope.location;
-      console.warn(step, 'step add()')
       $scope.trail.crumbs += 1;
       const crumb = $scope.crumb();
+      crumb.location = arg;
+      console.warn(arg, 'arg add()')
+      console.warn(crumb, 'crumb add()')
       $scope.crumbs.push(crumb);
-      console.warn($scope.crumb, 'crumb');
+      console.warn($scope.crumbs, 'mylistofcrumbs');
     }
   };
 
@@ -187,6 +183,7 @@ angular.module('breadcrumb')
   $scope.reviewMap = () => {
     $scope.loading = null;
     $scope.review.check = true;
+    console.warn($scope.crumbs, 'array in ReviewMap of Crumbs')
     Map.add($scope.crumbs, $scope.trail.transport)
     .then((data) => {
       $scope.loading = { display: 'none' };
