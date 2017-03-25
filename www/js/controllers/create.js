@@ -2,7 +2,8 @@
 /* global TransitionType */
 
 angular.module('breadcrumb')
-.controller('CreateTrailCtrl', function ($scope, $state, Trail, Map, Data, leafletData, LocationService) {
+.controller('CreateTrailCtrl', function ($scope, $state, Trail, Map, Data, leafletData, LocationService, $timeout, $interval, $rootScope, $q) {
+  $scope.test = 'test';
   const moveX = (crumb, num) => {
     const move = `${crumb.left += num}%`;
 
@@ -90,14 +91,14 @@ angular.module('breadcrumb')
     lng: -90.0715,
   };
 
-  $scope.$on('transferUp', (event, data) => {
-    $scope.location.lat = data.coords.geometry.location.lat();
-    $scope.location.lng = data.coords.geometry.location.lng();
-    console.warn('on working', $scope.location, data);
-    $scope.$watch('location', () => {
-      $scope.updateMap();
-    }, true);
-  });
+  // $scope.$on('transferUp', (event, data) => {
+  //   $scope.location.lat = data.coords.geometry.location.lat();
+  //   $scope.location.lng = data.coords.geometry.location.lng();
+  //   console.warn('on working', $scope.location, data);
+  //   $scope.$watch('location', () => {
+  //     $scope.updateMap();
+  //   }, true);
+  // });
 
   $scope.obj = {};
 
@@ -293,7 +294,8 @@ angular.module('breadcrumb')
       $scope.review.style = {
         'animation-name': 'moveUp',
       };
-      $scope.$apply();
+      // TODO: TRY TO SEE IF I CAN GET IT WORKING NOT FROM HERE RIGHT AWAY
+      // $scope.$apply();
     });
   };
 
@@ -321,6 +323,7 @@ angular.module('breadcrumb')
     });
   };
 
+  // this sets the default of the leaflet map
   if (window.Android) {
     angular.extend($scope, {
       center: {
@@ -358,12 +361,6 @@ angular.module('breadcrumb')
         zoom: 15,
         autoDiscover: false,
       },
-      events: {
-        map: {
-          enable: ['zoomstart', 'drag', 'click', 'mousemove'],
-          logic: 'emit',
-        },
-      },
       markers: {
         marker: {
           lat: 29.9511,
@@ -371,12 +368,18 @@ angular.module('breadcrumb')
           draggable: true,
         },
       },
+      events: {
+        map: {
+          enable: ['zoomstart', 'drag', 'click', 'mousemove'],
+          logic: 'emit',
+        },
+      },
       defaults: {
         scrollWheelZoom: false,
       },
     });
   }
-
+  // this updates map when location from autocomplete changes $watch
   $scope.updateMap = () => {
     $scope.center = {
       lat: $scope.location.lat,
@@ -400,7 +403,7 @@ angular.module('breadcrumb')
     $scope.center.lng = center.lng;
     $scope.location.lat = center.lat;
     $scope.location.lng = center.lng;
-    $scope.updateMap();
+    // $scope.updateMap();
     $scope.markers = {
       marker: {
         lat: $scope.center.lat,
@@ -415,27 +418,107 @@ angular.module('breadcrumb')
     console.warn(args, 'args');
     // now make this new args populate the input value !!!!
     const map = args.leafletEvent.target;
+
     // const center = (map.getCenter());
     const center = map.getLatLng();
+    // console.log(map.panTo(center), 'going to pan to the center ')
+
     // change the center based on where you placed the marker
     $scope.center.lat = center.lat;
     $scope.center.lng = center.lng;
     // change the location which speaks to the input box in view
     $scope.location.lat = center.lat;
     $scope.location.lng = center.lng;
-    $scope.updateMap();
-    $scope.markers = {
-      marker: {
-        lat: $scope.center.lat,
-        lng: $scope.center.lng,
-      },
-    };
-    console.warn($scope.markers.marker.lat, 'change in marker');
-    console.warn($scope.markers.marker.lng);
+    // $scope.updateMap();
+
+    console.warn($scope.location, 'change in marker');
+
+    // $scope.$watch('location', () => {
+    //   $scope.markers =
+    // }, true);
+    // $timeout(() => {
+    //   // angular.extend($scope, {
+    //   //   markers: {
+    //   //     marker: {
+    //   //       lat: center.lat,
+    //   //       lng: center.lat,
+    //   //       draggable: true,
+    //   //     },
+    //   //   },
+    //   // });
+      // $scope.$apply(() => {
+      //   $scope.markers.marker.lat = center.lat;
+      //   $scope.markers.marker.lng = center.lng;
+      // });
+    //
+    // });
+    // $scope.$watchGroup((['center.lat', 'center.lng']), () => {
+    //    $scope.markers.marker.lat = center.lat;
+    //    $scope.markers.marker.lng = center.lng;
+    // });
+    // $scope.$apply();
+    // $scope.$apply(() => {
+    //   $scope.markers.marker.lat = center.lat;
+    //   $scope.markers.marker.lng = center.lng;
+    // });
+
+    // $scope.safeApply(function() {
+    //   // im extending the marker to the new marker location when it moves
+    //   angular.extend($scope, {
+    //     markers: {
+    //       marker: {
+    //         lat: center.lat,
+    //         lng: center.lat,
+    //         draggable: true,
+    //       },
+    //     },
+    //   });
+    // });
+    // console.warn($scope.markers, 'marker info')
+
+    // TODO: HOW TO MAKE THE REVERSE GEOCODE UPDATE WITH THE NEW MARKERS coords
+    // _.defer(() => {
+
+    //   $scope.$apply();
+    // });
+
+    // $scope.$watch('location', () => {
+    //   $scope.markers = {
+    //     marker: {
+    //       lat: $scope.center.lat,
+    //       lng: $scope.center.lng,
+    //     },
+    //   };
+    // });
+    //
+    // $scope.$evalAsync(() => {
+    //   angular.extend($scope, {
+    //     markers: {
+    //       marker: {
+    //         lat: center.lat,
+    //         lng: center.lat,
+    //         draggable: true,
+    //       },
+    //     },
+    //   });
+    // });
+    console.warn($scope.markers.marker.lng, '$evalAsync');
 
     // when the marker changes, make sure that it populates the input box
 
   });
+
+
+
+  // $scope.markers = [];
+  // $scope.$on('leafletDirectiveMap.click', (event, args) => {
+  //   const leafEvent = args.leafletEvent;
+  //   $scope.markers.push({
+  //     lat: leafEvent.latlng.lat,
+  //     lng: leafEvent.latlng.lng,
+  //     draggable: true,
+  //   });
+  // });
 
   $scope.tiles = {
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
