@@ -387,23 +387,7 @@ angular.module('breadcrumb')
     };
   };
 
-  $scope.$on('leafletDirectiveMap.move', (event, args) => {
-    // Get the Leaflet map from the triggered event.
-    const map = args.leafletEvent.target;
-    const center = (map.getCenter());
-    $scope.center.lat = center.lat;
-    $scope.center.lng = center.lng;
-    $scope.location.lat = center.lat;
-    $scope.location.lng = center.lng;
-    $scope.updateMap();
-    $scope.markers = {
-      marker: {
-        lat: $scope.center.lat,
-        lng: $scope.center.lng,
-      },
-    };
-    console.warn($scope.location, '$scope.location at the same time')
-  });
+0
 
   $scope.tiles = {
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',

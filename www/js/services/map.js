@@ -47,13 +47,18 @@ angular.module('breadcrumb').factory('Map', function () {
   };
 
   const addPath = (directions) => {
+    console.warn(directions, 'directions')
     let obj = {};
     const request = {
-      origin: directions[0].address,
-      waypoints: wayPointsMakers(directions),
-      destination: directions[directions.length - 2].address,
+      // origin: directions[0].address,
+      origin: new google.maps.LatLng(directions[0].latitude, directions[0].longitude),
+      destination: new google.maps.LatLng(directions[directions.length - 2].latitude, directions[directions.length - 2].longitude),
+
+      // waypoints: wayPointsMakers(directions),
+      // destination: directions[directions.length - 2].address,
       travelMode: google.maps.DirectionsTravelMode.DRIVING,
     };
+    console.warn(request, 'request')
     return new Promise(function (resolve, reject) {
       directionsService.route(request, (response, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
@@ -66,7 +71,7 @@ angular.module('breadcrumb').factory('Map', function () {
           };
           resolve(obj);
         } else {
-          reject('failed');
+          reject(status);
         }
         return obj;
       });
