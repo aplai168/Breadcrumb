@@ -307,7 +307,7 @@ angular.module('breadcrumb')
         'animation-name': 'moveUp',
       };
       // TODO: TRY TO SEE IF I CAN GET IT WORKING NOT FROM HERE RIGHT AWAY
-      // $scope.$apply();
+      $scope.$apply();
     });
   };
 
