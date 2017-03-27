@@ -239,11 +239,23 @@ angular.module('breadcrumb')
       $scope.trail.crumbs += 1;
       const crumb = $scope.crumb();
       $scope.crumbs.push(crumb);
-      if ($scope.crumbs.length > 1) {
-        $scope.crumbs[$scope.crumbs.length - 2].latitude = arg.geometry.location.lat();
-        $scope.crumbs[$scope.crumbs.length - 2].longitude = arg.geometry.location.lng();
-        $scope.crumbs[$scope.crumbs.length - 2].address = arg.formatted_address;
-      }
+      // if (arg) {
+        // currently the location.lat and location.lng is being updated
+        // if ($scope.crumbs.length > 1) {
+        //   console.warn(arg, 'arg')
+        //   $scope.crumbs[$scope.crumbs.length - 2].latitude = arg.geometry.location.lat();
+        //   $scope.crumbs[$scope.crumbs.length - 2].longitude = arg.geometry.location.lng();
+        //   $scope.crumbs[$scope.crumbs.length - 2].address = arg.formatted_address;
+        // }
+      // } else {
+        if ($scope.crumbs.length > 1) {
+          console.warn($scope.center.lat, 'center.lat is updated')
+          $scope.crumbs[$scope.crumbs.length - 2].latitude = $scope.center.lat;
+          $scope.crumbs[$scope.crumbs.length - 2].longitude = $scope.center.lng;
+          // TODO: get the formatted_address
+          // $scope.crumbs[$scope.crumbs.length - 2].address = arg.formatted_address;
+        }
+      // }
     }
   };
 
@@ -429,6 +441,7 @@ angular.module('breadcrumb')
     // change the location which speaks to the input box in view
     $scope.location.lat = center.lat;
     $scope.location.lng = center.lng;
+
     // $scope.updateMap();
 
     console.warn($scope.location, 'change in marker');
