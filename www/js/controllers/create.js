@@ -513,11 +513,11 @@ angular.module('breadcrumb')
   // }
 
 
-  $scope.$watch('place', (event) => {
-    $scope.location.formatted_address = event;
-    console.warn($scope.place, 'place address is being $watched')
-
-  });
+  // $scope.$watch('place', (event) => {
+  //   $scope.location.formatted_address = event;
+  //   console.warn($scope.place, 'place address is being $watched')
+  //
+  // });
 
 
   // $scope.initAutocomplete = () => {
